@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+	<meta charset="utf-8">
+	<title>
+
+	</title>
+	<head>
+		<style>
+			canvas { display: block; width: 100%; height: 100%; }
+			body { margin: 0; padding: 0; }
+		</style>
+	</head>
+	<body>
+		<canvas id="pixi-canvas"></canvas>
+		<script src="http://pixijs.download/v4.1.1/pixi.min.js"></script>
+		<script src="https://google.github.io/traceur-compiler/bin/traceur.js"></script>
+		<script src="https://google.github.io/traceur-compiler/bin/BrowserSystem.js"></script>
+		<script src="https://google.github.io/traceur-compiler/src/bootstrap.js"></script>
+		<script type="module">
+
+import * as main from "main.js";
+
+function requestFullscreen() {
+	const canvas = document.getElementById( "pixi-canvas" );	
+	if(canvas.requestFullscreen) {
+		canvas.requestFullscreen();
+	} else if(canvas.mozRequestFullScreen) {
+		canvas.mozRequestFullScreen();
+	} else if(canvas.webkitRequestFullscreen) {
+		canvas.webkitRequestFullscreen();
+	} else if(canvas.msRequestFullscreen) {
+		canvas.msRequestFullscreen();
+	}
+}
+
+window.onresize = () => {
+	const canvas = document.getElementById( "pixi-canvas" );
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+	main.resize( window.innerWidth, window.innerHeight );
+}
+
+let current = null;
+function step( stamp ) {
+	if ( current === null ) {
+		main.init( document.getElementById( "pixi-canvas" ), window.innerWidth, window.innerHeight );
+	} else {
+		main.update( stamp - current );
+		main.render();
+	}
+	current = stamp;
+	window.requestAnimationFrame( step );
+}
+
+window.requestAnimationFrame( step );
+
+window.onmousedown = ( e ) => main.mousedown( e, e.x, e.y );
+window.onmouseup   = ( e ) => main.mouseup( e, e.x, e.y );
+window.onmousemove = ( e ) => main.mousemove( e, e.x, e.y, e.movementX, e.movementY );
+
+const canvas = document.getElementById( "pixi-canvas" );
+
+[
+	["touchstart",( e ) => main.touchstart( e, e.changedTouches[0].clientX, e.changedTouches[0].clientY, e.changedTouches )],
+	["touchend", ( e ) => main.touchend( e )],
+	["touchcancel", ( e ) => main.touchcancel( e )],
+	["touchmove", ( e ) => main.touchmove( e, e.changedTouches[0].clientX, e.changedTouches[0].clientY )],
+].forEach( ([message,handler]) => canvas.addEventListener( message, handler ));
+
+		</script>
+	</body>
+</html>
