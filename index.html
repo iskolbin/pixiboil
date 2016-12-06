@@ -20,19 +20,6 @@
 
 import * as main from "main.js";
 
-function requestFullscreen() {
-	const canvas = document.getElementById( "pixi-canvas" );	
-	if(canvas.requestFullscreen) {
-		canvas.requestFullscreen();
-	} else if(canvas.mozRequestFullScreen) {
-		canvas.mozRequestFullScreen();
-	} else if(canvas.webkitRequestFullscreen) {
-		canvas.webkitRequestFullscreen();
-	} else if(canvas.msRequestFullscreen) {
-		canvas.msRequestFullscreen();
-	}
-}
-
 window.onresize = () => {
 	const canvas = document.getElementById( "pixi-canvas" );
 	canvas.width = window.innerWidth;
@@ -54,13 +41,12 @@ function step( stamp ) {
 
 window.requestAnimationFrame( step );
 
-window.onmousedown = ( e ) => main.mousedown( e, e.x, e.y );
-window.onmouseup   = ( e ) => main.mouseup( e, e.x, e.y );
-window.onmousemove = ( e ) => main.mousemove( e, e.x, e.y, e.movementX, e.movementY );
-
 const canvas = document.getElementById( "pixi-canvas" );
 
 [
+	["mouseup", ( e ) => main.mouseup( e, e.x, e.y )],
+	["mousedown", ( e ) => main.mousedown( e, e.x, e.y )],
+	["mousemove", ( e ) => main.mousemove( e, e.x, e.y, e.movementX, e.movementY )],
 	["touchstart",( e ) => main.touchstart( e, e.changedTouches[0].clientX, e.changedTouches[0].clientY, e.changedTouches )],
 	["touchend", ( e ) => main.touchend( e )],
 	["touchcancel", ( e ) => main.touchcancel( e )],
